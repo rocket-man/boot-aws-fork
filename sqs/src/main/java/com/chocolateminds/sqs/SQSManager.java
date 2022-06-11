@@ -11,40 +11,43 @@ import org.springframework.stereotype.Service;
 @Service
 public class SQSManager implements CommandLineRunner {
 
-    private final String QUEUE_NAME = "my-sample04044";
+	private final String QUEUE_NAME = "boot-aws-sqs";
+	// https://sqs.ap-south-1.amazonaws.com/329207214213/boot-aws-sqs
+	private QueueMessagingTemplate queueMessagingTemplate;
 
-    private QueueMessagingTemplate queueMessagingTemplate;
+	@Autowired
+	public SQSManager(AmazonSQSAsync amazonSQSAsync) {
+		queueMessagingTemplate = new QueueMessagingTemplate(amazonSQSAsync);
+	}
 
-    @Autowired
-    public SQSManager(AmazonSQSAsync amazonSQSAsync){
-        queueMessagingTemplate = new QueueMessagingTemplate(amazonSQSAsync);
-    }
+	public void sendMessage(String message) {
+		System.out.println("Sending a message" + message);
+		queueMessagingTemplate.convertAndSend(QUEUE_NAME, message);
+	}
 
-    public void sendMessage(String message){
-        System.out.println("Sending a message"+message);
-        queueMessagingTemplate.convertAndSend(QUEUE_NAME, message);
-    }
+	/**
+	 * Receive a message using a listener
+	 * 
+	 * @param message
+	 */
+	@SqsListener(QUEUE_NAME)
+	public void receiveMessage(String message) {
+		System.out.println("Received message" + message);
+	}
 
-    /**
-     * Receive a message using a listener
-     * @param message
-     */
-    @SqsListener(QUEUE_NAME)
-    public void receiveMessage(String message){
-        System.out.println("Received message"+message);
-    }
+	/**
+	 * Receive a message by specifying a queuename on the template
+	 * 
+	 * @param queName
+	 */
+	public void receive(String queName) {
+		Message<?> message = queueMessagingTemplate.receive(queName);
+		System.out.println(">>" + message.getPayload());
+	}
 
-    /**
-     * Receive a message by specifying a queuename on the template
-     * @param queName
-     */
-    public void receive(String queName){
-        Message<?> message = queueMessagingTemplate.receive(queName);
-        System.out.println(">>"+message.getPayload());
-    }
-    @Override
-    public void run(String... args) throws Exception {
-//        sendMessage("Hello, SQS World!");
-    //  receive(QUEUE_NAME);
-    }
+	@Override
+	public void run(String... args) throws Exception {
+		sendMessage("Hello, SQS World!");
+		receive(QUEUE_NAME);
+	}
 }

@@ -1,3 +1,4 @@
+/*
 package com.chocolateminds.sqs;
 
 import com.amazonaws.services.sqs.AmazonSQSAsync;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class FifoSQSManager implements CommandLineRunner {
 
-    private String QUEUE_ARN = "https://sqs.eu-west-2.amazonaws.com/304593876351/cloud-queue.fifo";
+    private String QUEUE_ARN = "https://sqs.ap-southeast-1.amazonaws.com/329207214213/boot-aws-sqs.fifo";
     private AmazonSQSAsync amazonSQSAsync;
 
     @Autowired
@@ -33,3 +34,4 @@ public class FifoSQSManager implements CommandLineRunner {
         System.out.println("Sent a message to FIFO successfully");
     }
 }
+*/
